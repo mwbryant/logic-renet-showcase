@@ -1,14 +1,14 @@
 use bevy::log::LogSettings;
+use local_ip_address::local_ip;
 use logic_renet_demo::*;
 use std::{
     net::{SocketAddr, UdpSocket},
-    pin,
-    time::{Duration, SystemTime},
+    time::SystemTime,
 };
 
 fn create_renet_client() -> RenetClient {
     //TODO Prompt for server IP
-    let server_addr = "192.168.0.16:42069".parse().unwrap();
+    let server_addr = SocketAddr::new(local_ip().unwrap(), 42069);
     let socket = UdpSocket::bind("0.0.0.0:0").unwrap();
     let connection_config = RenetConnectionConfig::default();
     let current_time = SystemTime::now()
