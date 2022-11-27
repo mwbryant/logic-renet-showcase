@@ -1,4 +1,4 @@
-use bevy::log::{LogPlugin, LogSettings};
+use bevy::log::LogPlugin;
 use local_ip_address::local_ip;
 use logic_renet_demo::*;
 use std::{
@@ -33,13 +33,12 @@ fn create_renet_server() -> RenetServer {
 
 fn main() {
     App::new()
-        .insert_resource(LogSettings {
+        .add_plugins(MinimalPlugins)
+        .add_plugin(LogPlugin {
             filter: "info,wgpu_core=warn,wgpu_hal=off,rechannel=warn".into(),
             level: bevy::log::Level::DEBUG,
         })
-        .add_plugins(MinimalPlugins)
-        .add_plugin(LogPlugin::default())
-        .add_plugin(RenetServerPlugin)
+        .add_plugin(RenetServerPlugin::default())
         .insert_resource(create_renet_server())
         .add_system(server_events)
         .add_system(server_ping)
