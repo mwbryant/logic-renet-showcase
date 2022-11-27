@@ -1,4 +1,3 @@
-use bevy::log::LogSettings;
 use local_ip_address::local_ip;
 use logic_renet_demo::*;
 use std::{
@@ -27,31 +26,29 @@ fn create_renet_client() -> RenetClient {
         user_data: None,
     };
 
-    RenetClient::new(
-        current_time,
-        socket,
-        client_id,
-        connection_config,
-        authentication,
-    )
-    .unwrap()
+    RenetClient::new(current_time, socket, connection_config, authentication).unwrap()
 }
 
 fn main() {
     App::new()
-        .insert_resource(LogSettings {
-            filter: "info,wgpu_core=warn,wgpu_hal=off,rechannel=warn".into(),
-            level: bevy::log::Level::DEBUG,
-        })
-        .insert_resource(WindowDescriptor {
-            width: 1280.,
-            height: 720.,
-            title: "Renet Demo Client".to_string(),
-            resizable: false,
-            ..Default::default()
-        })
-        .add_plugins(DefaultPlugins)
-        .add_plugin(RenetClientPlugin)
+        .add_plugins(
+            DefaultPlugins
+                .set(bevy::log::LogPlugin {
+                    filter: "info,wgpu_core=warn,wgpu_hal=off,rechannel=warn".into(),
+                    level: bevy::log::Level::DEBUG,
+                })
+                .set(WindowPlugin {
+                    window: WindowDescriptor {
+                        width: 1280.,
+                        height: 720.,
+                        title: "Renet Demo Client".to_string(),
+                        resizable: false,
+                        ..Default::default()
+                    },
+                    ..Default::default()
+                }),
+        )
+        .add_plugin(RenetClientPlugin::default())
         .insert_resource(create_renet_client())
         .add_system(client_ping)
         .run();
